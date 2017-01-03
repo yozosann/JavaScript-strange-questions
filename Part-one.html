@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        //1.parseInt接收第二个参数作为进制，当数比进制大时，返回NaN
+        var a = ["1", "2", "3"].map(parseInt);
+        console.log('1:',a);  //[1, NaN, NaN];
+
+        //2.null是一个原始值，期望此处引用一个对象
+        console.log('2:',[typeof null, null instanceof Object]);   //objcet false
+
+        //3. 此处报错，因为reduce需要原始值作为第二个参数。
+        //console.log([ [3,2,1].reduce(Math.pow), [].reduce(Math.pow) ]); 
+
+        //4. +号优先级大于三目运算符
+        var val = 'smtg';
+        console.log('4:','Value is ' + (val === '11smtg') ? 'Something' : 'Nothing'); //Something
+
+        //5.自执行函数是一个块级作用域 name在里面还没有定义
+        var name = 'World!';
+        (function () {
+            if (typeof name === 'undefined') {
+                var name = 'Jack';
+                console.log('5:','Goodbye ' + name);
+            } else {
+                console.log('5:','Hello ' + name);
+            }
+        })();  //Goodbye Jack
+        
+        //6.javascript中最大的数就是2^53，2^53 + 1仍然为2^53
+        var END = Math.pow(2, 53);
+        var START = END - 100;
+        var count = 0;
+        // for (var i = START; i <= END; i++) {
+        //    count++;
+        //}
+        console.log('6:',count); //无限循环
+
+        //7.filter会忽略空位，
+        var ary = [0,1,2];
+        ary[10] = 10;
+        console.log('7:',ary.filter(function(x) { return x === undefined;}));  // []
+
+        //8.js没有精确计算，有时候结果会正确有时候不会 0.8-0.6 = 0.2000000000007
+        var two   = 0.2
+        var one   = 0.1
+        var eight = 0.8
+        var six   = 0.6
+        console.log('8:',[two - one == one, eight - six == two]);
+
+        //9.switch用的是严格匹配，这里传入的是对象，所以...
+        function showCase(value) {
+            switch(value) {
+            case 'A':
+                console.log('9:','Case A');
+                break;
+            case 'B':
+                console.log('9:','Case B');
+                break;
+            case undefined:
+                console.log('9:','undefined');
+                break;
+            default:
+                console.log('9:','Do not know!');
+            }
+        }
+        showCase(new String('A'));
+
+        //10.这里没有调用new 不是返回一个对象，只是显示类型转化为String
+        function showCase2(value) {
+            switch(value) {
+            case 'A':
+                console.log('10:','Case A');
+                break;
+            case 'B':
+                console.log('10:','Case B');
+                break;
+            case undefined:
+                console.log('10:','undefined');
+                break;
+            default:
+                console.log('10:','Do not know!');
+            }
+        }
+        showCase2(String('A'));
+        
+        //11. -9取余为-1，无限大取余为NaN故，所以在判断奇偶时有用的只有判断是否余数为0
+        function isOdd(num) {
+            return num % 2 == 1;
+        }
+        function isEven(num) {
+            return num % 2 == 0;
+        }
+        function isSane(num) {
+            return isEven(num) || isOdd(num);
+        }
+        var values = [7, 4, '13', -9, Infinity];
+        console.log('11:',values.map(isSane));  // [true, true, true, false, false]
+    </script>
+</body>
+</html>
