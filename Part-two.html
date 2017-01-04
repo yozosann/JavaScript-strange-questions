@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+    //12.parse第二个参数为进制，当数大于进制返回NaN，进制为0认为是十进制
+    console.log('12:', [parseInt(3, 8),parseInt(3, 2),parseInt(3, 0)]); //[3, NaN, 3]
+
+    //13. (1)Array.isArray 的判定方法是查看内部属性[[Class]]是否是Array
+    //    toString()方法可以获得，而Array.prototye的内部属性是Array 故true
+    //    (2)instanceof的判断方法是，查看左值的原型链是否等于右值的原型
+    //    Array.prototype的原型指向 Object.prototype 不等于Array.prototype故返回fales
+    console.log('13:', 
+        Array.isArray(Array.prototype),      //true
+        Array.prototype instanceof Array     //false
+    );
+
+    //14. 首先a是对象，Boolean(a)为true 故走向分支一， 判断 a == true
+    //    根据ES5中的文档(看一看http://blog.csdn.net/indigo_/article/details/52597167)
+    //    当Boolean遇见Object，Boolean转为Number 故判断 a == 1
+    //    当Number遇见Object，Object转为String 故判断 '0' == 1
+    //    当Number遇见String，String转为Number 故判断 1 == 1 故为false
+    var a = [0];
+    if ([0]) {
+        console.log('14:', a == true);
+    } else {
+        console.log('14:', "wut");
+    } //false
+    
+    //15. []是对象，对象比较时比较地址，明显两个不同[] 有不同引用
+    console.log('15:', [] == []);  //false
+
+    //16. Number遇见 + 转为String ，String遇见 - * /等 转为Number
+    console.log('16:', '5' + 3, '5' - 2); // '53' , 3
+
+    //17. 保留第一个数后的运算符 ，然后去掉所有+号，-号即为取负数运算符 
+    console.log('17:', 1 + - + + + - 1);   //2 相当于 1 + ( -(- 1) )
+    //再比如 1 - - - + - 2 相当于 1 - ( -( -(- 2))) => 1 - (-2) => 3
+
+    //18.ES5 map会把空位识别为undefined ES6 map会忽略空位，执行完保留空位
+    var ary = Array(3);
+    ary[0]=2
+    console.log('18:',ary.map(function(elem) { return '1'; }));//结果为[1,undefined,undefined] 或[1,,]
+
+    //19.arguments中有a,b,c的引用 当传给sidEffecting时就把引用传了过去，a就被赋值为10了故
+    function sidEffecting(ary) {
+        ary[0] = ary[2];
+    }
+    function bar(a,b,c) {
+        c = 10
+        sidEffecting(arguments);
+        return a + b + c;
+    }
+    console.log('19:', bar(1,1,1)); //21
+
+    //20.因为没有精度处理，所以大数字运算也有问题
+    var a = 111111111111111110000,
+    b = 1111;
+    console.log('20:',a + b);  //111111111111111110000
+
+    //21.因为reverse由this执行，而没有调用时this为window
+    var x = [].reverse;
+    //console.log('21: ',x());  //报错
+
+    //22.Number.MIN_VALUE返回的是大于0最小的数， 真正最小数为 -Number.MAX_VALUE
+    console.log('22:', Number.MIN_VALUE > 0); //true
+    </script>
+</body>
+</html>
