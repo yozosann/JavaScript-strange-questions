@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+    //34.当执行字符串匹配时，test()中的值会强制类型转换为String 也就是'null'和'undefined'
+    var lowerCaseOnly =  /^[a-z]+$/;
+    console.log('34:', [lowerCaseOnly.test(null), lowerCaseOnly.test()]) //true true
+
+    //35.因为数组定义时允许最后一个元素后跟一个逗号，例 [1, 2, 3, ],
+    //   所以这会被识别为三个空元素 强制类型转换为String就是三个''故：
+    console.log('35:', [,,,].join(', '));  //", , "
+
+    //36. 传入的字符串要满足能够解析为日期才会有正确输出，否则返回Invalid Date
+    //    例如 传入 new Date("Jul 8, 2005")
+    //    就能正确返回 Fri Jul 08 2005 00:00:00 GMT+0800 (China Standard Time)
+    console.log('36:', new Date("epoch"));   //Invalid Date
+
+    //37. Function.length定义为1，new Function()相当于声明一个 f(){}
+    //    我们又知道函数的length等于参数个数 ，故 1 === 0 :false
+    console.log('37:', Function.length === new Function().length); //false
+
+    //38. Date()返回当前日期和参数无关; new Date()返回指定日期，无参数时返回当前日期
+    //    当参数为0时 范围初始日期 1970那个
+    //    由于都是取当前日期 毫秒也有差别 所以比较为false
+    var a = Date(0);  
+    var b = new Date(0);  
+    var c = new Date();  
+    console.log('38:', [a === b, b === c, a === c]);
+
+    //39. 这里其实很好理解，当你比较一个数组最大值时，一般都会声明 let max = -Infinity;
+    //    -Infinity作为基数，一旦在数组中发现有值比这个值大时
+    //    max = 当前值， 最后返回max， 如果传入的数组为空，即没有数比 -Infinity大
+    //    故返回-Infinity ， 同理  min()就返回 +Infinity    +Infinity < +Infinity
+    //    false
+    var min = Math.min(), max = Math.max()
+    console.log('39:', min < max) // false;
+
+    //40. 这里主要有三个考点 1.exec  2./g  3.&&运算符
+    //    1.exec返回一个数组 ，match[0]代表匹配成功的整个字符串
+    //    match[1]代表匹配成功的第一个圆括号的值 match[2] match[3]依次类推
+    //    2./g代表全局匹配 /i代表忽略大小写， 含有g的匹配式子，会从上次匹配
+    //    后的索引开始继续匹配，比如re匹配了num=1 下次匹配NUM=2 时索引就为6
+    //    3. A&&B 计算时 若A为真返回B 若A为假返回A 例如 0&&7 返回0  7&&8返回8
+    function captureOne(re, str) {
+    var match = re.exec(str);
+    console.log(match);
+    return match && match[1];
+    }
+    var numRe  = /num=(\d+)/ig,
+        wordRe = /word=(\w+)/i,
+        a1 = captureOne(numRe,  "num=1"),  //match = ["num=1","1"]; 返回1
+        a2 = captureOne(wordRe, "word=1"), //match = ["word=1","1"]; 返回1
+        a3 = captureOne(numRe,  "NUM=2"), //match = null, 从index=6开始匹配 为空; 返回null
+        a4 = captureOne(wordRe,  "WORD=2"); //match = ["WORD=2","2"]; 返回2
+    console.log('40:', [a1 === a2, a3 === a4]);  //true
+
+    //41.因为月份和星期是由0开始的，故第一字符串解析成3月，但第二个解析为2月
+    var date1 = new Date("2014-03-19"),
+        date2 = new Date(2014, 03, 19);
+    console.log('41:',[date1.getDay() === date2.getDay(), date1.getMonth() === date2.getMonth()]); //false false
+
+    //42.因为在匹配式子中.代表任意匹配一个字符，如果想要匹配. 需要加转义符号'/'
+    if ('http://giftwrapped.com/picture.jpg'.match('.gif')) {
+        console.log('42:','a gif file');
+        //这里加转义也不行 因为前面正好是/  
+    } else {
+        console.log('42:','not a gif file');
+    }  // a gif file  
+
+    //43.当作为参数时就已经声明了，再次声明无效
+    function foo(a) {
+        var a;
+        return a;
+    }
+    function bar(a) {
+        var a = 'bye';
+        return a;
+    }
+    console.log('43:', [foo('hello'), bar('hello')]);
+    </script>
+</body>
+</html>
